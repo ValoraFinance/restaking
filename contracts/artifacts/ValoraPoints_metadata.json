@@ -1,0 +1,751 @@
+{
+	"compiler": {
+		"version": "0.8.30+commit.73712a01"
+	},
+	"language": "Solidity",
+	"output": {
+		"abi": [
+			{
+				"inputs": [],
+				"name": "InvalidInitialization",
+				"type": "error"
+			},
+			{
+				"inputs": [],
+				"name": "NotInitializing",
+				"type": "error"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "address",
+						"name": "owner",
+						"type": "address"
+					}
+				],
+				"name": "OwnableInvalidOwner",
+				"type": "error"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "address",
+						"name": "account",
+						"type": "address"
+					}
+				],
+				"name": "OwnableUnauthorizedAccount",
+				"type": "error"
+			},
+			{
+				"anonymous": false,
+				"inputs": [
+					{
+						"components": [
+							{
+								"internalType": "uint256",
+								"name": "stakingMultiplier",
+								"type": "uint256"
+							},
+							{
+								"internalType": "uint256",
+								"name": "lendingMultiplier",
+								"type": "uint256"
+							},
+							{
+								"internalType": "uint256",
+								"name": "borrowingMultiplier",
+								"type": "uint256"
+							},
+							{
+								"internalType": "uint256",
+								"name": "loyaltyBonusRate",
+								"type": "uint256"
+							},
+							{
+								"internalType": "uint256",
+								"name": "maxLoyaltyDays",
+								"type": "uint256"
+							}
+						],
+						"indexed": false,
+						"internalType": "struct ValoraPoints.PointsConfig",
+						"name": "newConfig",
+						"type": "tuple"
+					}
+				],
+				"name": "ConfigUpdated",
+				"type": "event"
+			},
+			{
+				"anonymous": false,
+				"inputs": [
+					{
+						"indexed": true,
+						"internalType": "address",
+						"name": "contractAddr",
+						"type": "address"
+					},
+					{
+						"indexed": false,
+						"internalType": "bool",
+						"name": "authorized",
+						"type": "bool"
+					}
+				],
+				"name": "ContractAuthorized",
+				"type": "event"
+			},
+			{
+				"anonymous": false,
+				"inputs": [
+					{
+						"indexed": false,
+						"internalType": "uint64",
+						"name": "version",
+						"type": "uint64"
+					}
+				],
+				"name": "Initialized",
+				"type": "event"
+			},
+			{
+				"anonymous": false,
+				"inputs": [
+					{
+						"indexed": true,
+						"internalType": "address",
+						"name": "previousOwner",
+						"type": "address"
+					},
+					{
+						"indexed": true,
+						"internalType": "address",
+						"name": "newOwner",
+						"type": "address"
+					}
+				],
+				"name": "OwnershipTransferred",
+				"type": "event"
+			},
+			{
+				"anonymous": false,
+				"inputs": [
+					{
+						"indexed": true,
+						"internalType": "address",
+						"name": "user",
+						"type": "address"
+					},
+					{
+						"indexed": true,
+						"internalType": "string",
+						"name": "category",
+						"type": "string"
+					},
+					{
+						"indexed": false,
+						"internalType": "uint256",
+						"name": "amount",
+						"type": "uint256"
+					}
+				],
+				"name": "PointsAwarded",
+				"type": "event"
+			},
+			{
+				"anonymous": false,
+				"inputs": [
+					{
+						"indexed": true,
+						"internalType": "address",
+						"name": "user",
+						"type": "address"
+					},
+					{
+						"indexed": false,
+						"internalType": "uint256",
+						"name": "amount",
+						"type": "uint256"
+					},
+					{
+						"indexed": false,
+						"internalType": "string",
+						"name": "purpose",
+						"type": "string"
+					}
+				],
+				"name": "PointsRedeemed",
+				"type": "event"
+			},
+			{
+				"anonymous": false,
+				"inputs": [
+					{
+						"indexed": true,
+						"internalType": "address",
+						"name": "user",
+						"type": "address"
+					},
+					{
+						"indexed": false,
+						"internalType": "uint256",
+						"name": "newTotal",
+						"type": "uint256"
+					}
+				],
+				"name": "PointsUpdated",
+				"type": "event"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "address",
+						"name": "",
+						"type": "address"
+					}
+				],
+				"name": "authorizedContracts",
+				"outputs": [
+					{
+						"internalType": "bool",
+						"name": "",
+						"type": "bool"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "address[]",
+						"name": "users",
+						"type": "address[]"
+					},
+					{
+						"internalType": "uint256[]",
+						"name": "amounts",
+						"type": "uint256[]"
+					},
+					{
+						"internalType": "string[]",
+						"name": "categories",
+						"type": "string[]"
+					}
+				],
+				"name": "batchUpdatePoints",
+				"outputs": [],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "address",
+						"name": "user",
+						"type": "address"
+					}
+				],
+				"name": "calculatePendingLoyaltyPoints",
+				"outputs": [
+					{
+						"internalType": "uint256",
+						"name": "",
+						"type": "uint256"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [],
+				"name": "config",
+				"outputs": [
+					{
+						"internalType": "uint256",
+						"name": "stakingMultiplier",
+						"type": "uint256"
+					},
+					{
+						"internalType": "uint256",
+						"name": "lendingMultiplier",
+						"type": "uint256"
+					},
+					{
+						"internalType": "uint256",
+						"name": "borrowingMultiplier",
+						"type": "uint256"
+					},
+					{
+						"internalType": "uint256",
+						"name": "loyaltyBonusRate",
+						"type": "uint256"
+					},
+					{
+						"internalType": "uint256",
+						"name": "maxLoyaltyDays",
+						"type": "uint256"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "address",
+						"name": "user",
+						"type": "address"
+					}
+				],
+				"name": "getPointsBreakdown",
+				"outputs": [
+					{
+						"internalType": "uint256",
+						"name": "staking",
+						"type": "uint256"
+					},
+					{
+						"internalType": "uint256",
+						"name": "lending",
+						"type": "uint256"
+					},
+					{
+						"internalType": "uint256",
+						"name": "borrowing",
+						"type": "uint256"
+					},
+					{
+						"internalType": "uint256",
+						"name": "loyalty",
+						"type": "uint256"
+					},
+					{
+						"internalType": "uint256",
+						"name": "total",
+						"type": "uint256"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "address",
+						"name": "user",
+						"type": "address"
+					}
+				],
+				"name": "getUserPoints",
+				"outputs": [
+					{
+						"components": [
+							{
+								"internalType": "uint256",
+								"name": "stakingPoints",
+								"type": "uint256"
+							},
+							{
+								"internalType": "uint256",
+								"name": "lendingPoints",
+								"type": "uint256"
+							},
+							{
+								"internalType": "uint256",
+								"name": "borrowingPoints",
+								"type": "uint256"
+							},
+							{
+								"internalType": "uint256",
+								"name": "loyaltyPoints",
+								"type": "uint256"
+							},
+							{
+								"internalType": "uint256",
+								"name": "totalPoints",
+								"type": "uint256"
+							},
+							{
+								"internalType": "uint256",
+								"name": "lastUpdate",
+								"type": "uint256"
+							}
+						],
+						"internalType": "struct ValoraPoints.UserPoints",
+						"name": "",
+						"type": "tuple"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [],
+				"name": "initialize",
+				"outputs": [],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
+				"inputs": [],
+				"name": "owner",
+				"outputs": [
+					{
+						"internalType": "address",
+						"name": "",
+						"type": "address"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "address",
+						"name": "user",
+						"type": "address"
+					},
+					{
+						"internalType": "uint256",
+						"name": "amount",
+						"type": "uint256"
+					},
+					{
+						"internalType": "string",
+						"name": "purpose",
+						"type": "string"
+					}
+				],
+				"name": "redeemPoints",
+				"outputs": [],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
+				"inputs": [],
+				"name": "renounceOwnership",
+				"outputs": [],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "address",
+						"name": "contractAddr",
+						"type": "address"
+					},
+					{
+						"internalType": "bool",
+						"name": "authorized",
+						"type": "bool"
+					}
+				],
+				"name": "setContractAuthorization",
+				"outputs": [],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
+				"inputs": [],
+				"name": "totalPointsDistributed",
+				"outputs": [
+					{
+						"internalType": "uint256",
+						"name": "",
+						"type": "uint256"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "address",
+						"name": "newOwner",
+						"type": "address"
+					}
+				],
+				"name": "transferOwnership",
+				"outputs": [],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "address",
+						"name": "user",
+						"type": "address"
+					},
+					{
+						"internalType": "uint256",
+						"name": "amount",
+						"type": "uint256"
+					},
+					{
+						"internalType": "uint256",
+						"name": "duration",
+						"type": "uint256"
+					}
+				],
+				"name": "updateBorrowingPoints",
+				"outputs": [],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"components": [
+							{
+								"internalType": "uint256",
+								"name": "stakingMultiplier",
+								"type": "uint256"
+							},
+							{
+								"internalType": "uint256",
+								"name": "lendingMultiplier",
+								"type": "uint256"
+							},
+							{
+								"internalType": "uint256",
+								"name": "borrowingMultiplier",
+								"type": "uint256"
+							},
+							{
+								"internalType": "uint256",
+								"name": "loyaltyBonusRate",
+								"type": "uint256"
+							},
+							{
+								"internalType": "uint256",
+								"name": "maxLoyaltyDays",
+								"type": "uint256"
+							}
+						],
+						"internalType": "struct ValoraPoints.PointsConfig",
+						"name": "newConfig",
+						"type": "tuple"
+					}
+				],
+				"name": "updateConfig",
+				"outputs": [],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "address",
+						"name": "user",
+						"type": "address"
+					},
+					{
+						"internalType": "uint256",
+						"name": "amount",
+						"type": "uint256"
+					},
+					{
+						"internalType": "uint256",
+						"name": "duration",
+						"type": "uint256"
+					}
+				],
+				"name": "updateLendingPoints",
+				"outputs": [],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "address",
+						"name": "user",
+						"type": "address"
+					}
+				],
+				"name": "updateLoyaltyPoints",
+				"outputs": [],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "address",
+						"name": "user",
+						"type": "address"
+					},
+					{
+						"internalType": "uint256",
+						"name": "amount",
+						"type": "uint256"
+					},
+					{
+						"internalType": "uint256",
+						"name": "duration",
+						"type": "uint256"
+					}
+				],
+				"name": "updateStakingPoints",
+				"outputs": [],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "address",
+						"name": "",
+						"type": "address"
+					}
+				],
+				"name": "userPoints",
+				"outputs": [
+					{
+						"internalType": "uint256",
+						"name": "stakingPoints",
+						"type": "uint256"
+					},
+					{
+						"internalType": "uint256",
+						"name": "lendingPoints",
+						"type": "uint256"
+					},
+					{
+						"internalType": "uint256",
+						"name": "borrowingPoints",
+						"type": "uint256"
+					},
+					{
+						"internalType": "uint256",
+						"name": "loyaltyPoints",
+						"type": "uint256"
+					},
+					{
+						"internalType": "uint256",
+						"name": "totalPoints",
+						"type": "uint256"
+					},
+					{
+						"internalType": "uint256",
+						"name": "lastUpdate",
+						"type": "uint256"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			}
+		],
+		"devdoc": {
+			"errors": {
+				"InvalidInitialization()": [
+					{
+						"details": "The contract is already initialized."
+					}
+				],
+				"NotInitializing()": [
+					{
+						"details": "The contract is not initializing."
+					}
+				],
+				"OwnableInvalidOwner(address)": [
+					{
+						"details": "The owner is not a valid owner account. (eg. `address(0)`)"
+					}
+				],
+				"OwnableUnauthorizedAccount(address)": [
+					{
+						"details": "The caller account is not authorized to perform an operation."
+					}
+				]
+			},
+			"events": {
+				"Initialized(uint64)": {
+					"details": "Triggered when the contract has been initialized or reinitialized."
+				}
+			},
+			"kind": "dev",
+			"methods": {
+				"owner()": {
+					"details": "Returns the address of the current owner."
+				},
+				"renounceOwnership()": {
+					"details": "Leaves the contract without owner. It will not be possible to call `onlyOwner` functions. Can only be called by the current owner. NOTE: Renouncing ownership will leave the contract without an owner, thereby disabling any functionality that is only available to the owner."
+				},
+				"transferOwnership(address)": {
+					"details": "Transfers ownership of the contract to a new account (`newOwner`). Can only be called by the current owner."
+				}
+			},
+			"version": 1
+		},
+		"userdoc": {
+			"kind": "user",
+			"methods": {},
+			"version": 1
+		}
+	},
+	"settings": {
+		"compilationTarget": {
+			"contracts/ValoraPoints.sol": "ValoraPoints"
+		},
+		"evmVersion": "prague",
+		"libraries": {},
+		"metadata": {
+			"bytecodeHash": "ipfs"
+		},
+		"optimizer": {
+			"enabled": false,
+			"runs": 200
+		},
+		"remappings": []
+	},
+	"sources": {
+		"@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol": {
+			"keccak256": "0xc163fcf9bb10138631a9ba5564df1fa25db9adff73bd9ee868a8ae1858fe093a",
+			"license": "MIT",
+			"urls": [
+				"bzz-raw://9706d43a0124053d9880f6e31a59f31bc0a6a3dc1acd66ce0a16e1111658c5f6",
+				"dweb:/ipfs/QmUFmfowzkRwGtDu36cXV9SPTBHJ3n7dG9xQiK5B28jTf2"
+			]
+		},
+		"@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol": {
+			"keccak256": "0xdb4d24ee2c087c391d587cd17adfe5b3f9d93b3110b1388c2ab6c7c0ad1dcd05",
+			"license": "MIT",
+			"urls": [
+				"bzz-raw://ab7b6d5b9e2b88176312967fe0f0e78f3d9a1422fa5e4b64e2440c35869b5d08",
+				"dweb:/ipfs/QmXKYWWyzcLg1B2k7Sb1qkEXgLCYfXecR9wYW5obRzWP1Q"
+			]
+		},
+		"@openzeppelin/contracts-upgradeable/security/ReentrancyGuardUpgradeable.sol": {
+			"keccak256": "0x2025ccf05f6f1f2fd4e078e552836f525a1864e3854ed555047cd732320ab29b",
+			"license": "MIT",
+			"urls": [
+				"bzz-raw://d27f4b23c2dee42394aebaf42bf238285230f472dfd3282a39c3f000ec28214f",
+				"dweb:/ipfs/QmQa3DnvccwdWJeWrjgXPnFMTWbzWQWR39hVqC7eEwo2PC"
+			]
+		},
+		"@openzeppelin/contracts-upgradeable/utils/ContextUpgradeable.sol": {
+			"keccak256": "0xdbef5f0c787055227243a7318ef74c8a5a1108ca3a07f2b3a00ef67769e1e397",
+			"license": "MIT",
+			"urls": [
+				"bzz-raw://08e39f23d5b4692f9a40803e53a8156b72b4c1f9902a88cd65ba964db103dab9",
+				"dweb:/ipfs/QmPKn6EYDgpga7KtpkA8wV2yJCYGMtc9K4LkJfhKX2RVSV"
+			]
+		},
+		"contracts/ValoraPoints.sol": {
+			"keccak256": "0x5540a9ea22ffcc9e1cb5a24047808ad10d2e319170cfdeff69518da65e83b25e",
+			"license": "MIT",
+			"urls": [
+				"bzz-raw://1ca5a12377f5cde36fe8d14a7db0646b664ac0a146e736a30deb1ba62e875de0",
+				"dweb:/ipfs/QmQrdS5FUia3WipfU3LacDih2Yu1mRBPDJbmXke7ME9uJG"
+			]
+		}
+	},
+	"version": 1
+}

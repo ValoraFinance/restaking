@@ -1,0 +1,163 @@
+{
+	"deploy": {
+		"VM:-": {
+			"linkReferences": {},
+			"autoDeployLib": true
+		},
+		"main:1": {
+			"linkReferences": {},
+			"autoDeployLib": true
+		},
+		"ropsten:3": {
+			"linkReferences": {},
+			"autoDeployLib": true
+		},
+		"rinkeby:4": {
+			"linkReferences": {},
+			"autoDeployLib": true
+		},
+		"kovan:42": {
+			"linkReferences": {},
+			"autoDeployLib": true
+		},
+		"goerli:5": {
+			"linkReferences": {},
+			"autoDeployLib": true
+		},
+		"Custom": {
+			"linkReferences": {},
+			"autoDeployLib": true
+		}
+	},
+	"data": {
+		"bytecode": {
+			"functionDebugData": {},
+			"generatedSources": [],
+			"linkReferences": {},
+			"object": "",
+			"opcodes": "",
+			"sourceMap": ""
+		},
+		"deployedBytecode": {
+			"functionDebugData": {},
+			"generatedSources": [],
+			"immutableReferences": {},
+			"linkReferences": {},
+			"object": "",
+			"opcodes": "",
+			"sourceMap": ""
+		},
+		"gasEstimates": null,
+		"methodIdentifiers": {
+			"bridgeToken(address,uint256,bytes3,bytes)": "7c5b29f8",
+			"isUnlocked(bytes32)": "3dadc1e1",
+			"unlockBridgedToken(bytes32,bytes3,address,address,uint256)": "94e94edd",
+			"unlocked(address,address,uint256)": "5b24f7de"
+		}
+	},
+	"abi": [
+		{
+			"inputs": [
+				{
+					"internalType": "address",
+					"name": "token_address",
+					"type": "address"
+				},
+				{
+					"internalType": "uint256",
+					"name": "value",
+					"type": "uint256"
+				},
+				{
+					"internalType": "bytes3",
+					"name": "destination",
+					"type": "bytes3"
+				},
+				{
+					"internalType": "bytes",
+					"name": "destination_address",
+					"type": "bytes"
+				}
+			],
+			"name": "bridgeToken",
+			"outputs": [],
+			"stateMutability": "nonpayable",
+			"type": "function"
+		},
+		{
+			"inputs": [
+				{
+					"internalType": "bytes32",
+					"name": "hash",
+					"type": "bytes32"
+				}
+			],
+			"name": "isUnlocked",
+			"outputs": [
+				{
+					"internalType": "bool",
+					"name": "",
+					"type": "bool"
+				}
+			],
+			"stateMutability": "view",
+			"type": "function"
+		},
+		{
+			"inputs": [
+				{
+					"internalType": "bytes32",
+					"name": "txHash",
+					"type": "bytes32"
+				},
+				{
+					"internalType": "bytes3",
+					"name": "source",
+					"type": "bytes3"
+				},
+				{
+					"internalType": "address",
+					"name": "token",
+					"type": "address"
+				},
+				{
+					"internalType": "address",
+					"name": "to",
+					"type": "address"
+				},
+				{
+					"internalType": "uint256",
+					"name": "value",
+					"type": "uint256"
+				}
+			],
+			"name": "unlockBridgedToken",
+			"outputs": [],
+			"stateMutability": "nonpayable",
+			"type": "function"
+		},
+		{
+			"inputs": [
+				{
+					"internalType": "address",
+					"name": "sender",
+					"type": "address"
+				},
+				{
+					"internalType": "address",
+					"name": "token",
+					"type": "address"
+				},
+				{
+					"internalType": "uint256",
+					"name": "value",
+					"type": "uint256"
+				}
+			],
+			"name": "unlocked",
+			"outputs": [],
+			"stateMutability": "nonpayable",
+			"type": "function"
+		}
+	]
+}

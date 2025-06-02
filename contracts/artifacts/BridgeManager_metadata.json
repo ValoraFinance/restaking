@@ -1,0 +1,418 @@
+{
+	"compiler": {
+		"version": "0.8.30+commit.73712a01"
+	},
+	"language": "Solidity",
+	"output": {
+		"abi": [
+			{
+				"inputs": [],
+				"name": "InvalidInitialization",
+				"type": "error"
+			},
+			{
+				"inputs": [],
+				"name": "NotInitializing",
+				"type": "error"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "address",
+						"name": "owner",
+						"type": "address"
+					}
+				],
+				"name": "OwnableInvalidOwner",
+				"type": "error"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "address",
+						"name": "account",
+						"type": "address"
+					}
+				],
+				"name": "OwnableUnauthorizedAccount",
+				"type": "error"
+			},
+			{
+				"anonymous": false,
+				"inputs": [
+					{
+						"indexed": true,
+						"internalType": "address",
+						"name": "oldBridge",
+						"type": "address"
+					},
+					{
+						"indexed": true,
+						"internalType": "address",
+						"name": "newBridge",
+						"type": "address"
+					}
+				],
+				"name": "BridgeUpdated",
+				"type": "event"
+			},
+			{
+				"anonymous": false,
+				"inputs": [
+					{
+						"indexed": false,
+						"internalType": "uint64",
+						"name": "version",
+						"type": "uint64"
+					}
+				],
+				"name": "Initialized",
+				"type": "event"
+			},
+			{
+				"anonymous": false,
+				"inputs": [
+					{
+						"indexed": true,
+						"internalType": "address",
+						"name": "previousOwner",
+						"type": "address"
+					},
+					{
+						"indexed": true,
+						"internalType": "address",
+						"name": "newOwner",
+						"type": "address"
+					}
+				],
+				"name": "OwnershipTransferred",
+				"type": "event"
+			},
+			{
+				"anonymous": false,
+				"inputs": [
+					{
+						"indexed": true,
+						"internalType": "address",
+						"name": "user",
+						"type": "address"
+					},
+					{
+						"indexed": false,
+						"internalType": "uint256",
+						"name": "amount",
+						"type": "uint256"
+					},
+					{
+						"indexed": false,
+						"internalType": "bytes3",
+						"name": "destination",
+						"type": "bytes3"
+					},
+					{
+						"indexed": false,
+						"internalType": "bytes",
+						"name": "validatorAddress",
+						"type": "bytes"
+					}
+				],
+				"name": "TokensBridgedToValidator",
+				"type": "event"
+			},
+			{
+				"anonymous": false,
+				"inputs": [
+					{
+						"indexed": false,
+						"internalType": "bytes3",
+						"name": "chainId",
+						"type": "bytes3"
+					},
+					{
+						"indexed": false,
+						"internalType": "bytes",
+						"name": "validatorAddress",
+						"type": "bytes"
+					}
+				],
+				"name": "ValidatorAddressUpdated",
+				"type": "event"
+			},
+			{
+				"inputs": [],
+				"name": "bridge",
+				"outputs": [
+					{
+						"internalType": "contract IBridge",
+						"name": "",
+						"type": "address"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [],
+				"name": "getBridgeConfig",
+				"outputs": [
+					{
+						"internalType": "address",
+						"name": "bridge_",
+						"type": "address"
+					},
+					{
+						"internalType": "bytes3",
+						"name": "nativeChainId_",
+						"type": "bytes3"
+					},
+					{
+						"internalType": "bytes",
+						"name": "validatorAddress_",
+						"type": "bytes"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [],
+				"name": "isBridgeConfigured",
+				"outputs": [
+					{
+						"internalType": "bool",
+						"name": "configured",
+						"type": "bool"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [],
+				"name": "nativeChainId",
+				"outputs": [
+					{
+						"internalType": "bytes3",
+						"name": "",
+						"type": "bytes3"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [],
+				"name": "owner",
+				"outputs": [
+					{
+						"internalType": "address",
+						"name": "",
+						"type": "address"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [],
+				"name": "renounceOwnership",
+				"outputs": [],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "address",
+						"name": "_bridge",
+						"type": "address"
+					}
+				],
+				"name": "setBridge",
+				"outputs": [],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "bytes3",
+						"name": "_chainId",
+						"type": "bytes3"
+					},
+					{
+						"internalType": "bytes",
+						"name": "_validatorAddress",
+						"type": "bytes"
+					}
+				],
+				"name": "setValidatorAddress",
+				"outputs": [],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "address",
+						"name": "newOwner",
+						"type": "address"
+					}
+				],
+				"name": "transferOwnership",
+				"outputs": [],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
+				"inputs": [],
+				"name": "validatorAddress",
+				"outputs": [
+					{
+						"internalType": "bytes",
+						"name": "",
+						"type": "bytes"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			}
+		],
+		"devdoc": {
+			"details": "Can be inherited by any contract that needs bridge functionality",
+			"errors": {
+				"InvalidInitialization()": [
+					{
+						"details": "The contract is already initialized."
+					}
+				],
+				"NotInitializing()": [
+					{
+						"details": "The contract is not initializing."
+					}
+				],
+				"OwnableInvalidOwner(address)": [
+					{
+						"details": "The owner is not a valid owner account. (eg. `address(0)`)"
+					}
+				],
+				"OwnableUnauthorizedAccount(address)": [
+					{
+						"details": "The caller account is not authorized to perform an operation."
+					}
+				]
+			},
+			"events": {
+				"Initialized(uint64)": {
+					"details": "Triggered when the contract has been initialized or reinitialized."
+				}
+			},
+			"kind": "dev",
+			"methods": {
+				"getBridgeConfig()": {
+					"returns": {
+						"bridge_": "Bridge contract address",
+						"nativeChainId_": "Native chain ID",
+						"validatorAddress_": "Validator address"
+					}
+				},
+				"isBridgeConfigured()": {
+					"returns": {
+						"configured": "True if all bridge settings are set"
+					}
+				},
+				"owner()": {
+					"details": "Returns the address of the current owner."
+				},
+				"renounceOwnership()": {
+					"details": "Leaves the contract without owner. It will not be possible to call `onlyOwner` functions. Can only be called by the current owner. NOTE: Renouncing ownership will leave the contract without an owner, thereby disabling any functionality that is only available to the owner."
+				},
+				"setBridge(address)": {
+					"params": {
+						"_bridge": "New bridge address"
+					}
+				},
+				"setValidatorAddress(bytes3,bytes)": {
+					"params": {
+						"_chainId": "Target chain ID",
+						"_validatorAddress": "Validator address in target chain"
+					}
+				},
+				"transferOwnership(address)": {
+					"details": "Transfers ownership of the contract to a new account (`newOwner`). Can only be called by the current owner."
+				}
+			},
+			"title": "BridgeManager",
+			"version": 1
+		},
+		"userdoc": {
+			"kind": "user",
+			"methods": {
+				"getBridgeConfig()": {
+					"notice": "Get bridge configuration"
+				},
+				"isBridgeConfigured()": {
+					"notice": "Check if bridge is properly configured"
+				},
+				"setBridge(address)": {
+					"notice": "Set bridge contract address"
+				},
+				"setValidatorAddress(bytes3,bytes)": {
+					"notice": "Set validator address and chain ID"
+				}
+			},
+			"notice": "Reusable contract for managing bridge operations",
+			"version": 1
+		}
+	},
+	"settings": {
+		"compilationTarget": {
+			"contracts/BridgeManager.sol": "BridgeManager"
+		},
+		"evmVersion": "prague",
+		"libraries": {},
+		"metadata": {
+			"bytecodeHash": "ipfs"
+		},
+		"optimizer": {
+			"enabled": false,
+			"runs": 200
+		},
+		"remappings": []
+	},
+	"sources": {
+		"@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol": {
+			"keccak256": "0xc163fcf9bb10138631a9ba5564df1fa25db9adff73bd9ee868a8ae1858fe093a",
+			"license": "MIT",
+			"urls": [
+				"bzz-raw://9706d43a0124053d9880f6e31a59f31bc0a6a3dc1acd66ce0a16e1111658c5f6",
+				"dweb:/ipfs/QmUFmfowzkRwGtDu36cXV9SPTBHJ3n7dG9xQiK5B28jTf2"
+			]
+		},
+		"@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol": {
+			"keccak256": "0xdb4d24ee2c087c391d587cd17adfe5b3f9d93b3110b1388c2ab6c7c0ad1dcd05",
+			"license": "MIT",
+			"urls": [
+				"bzz-raw://ab7b6d5b9e2b88176312967fe0f0e78f3d9a1422fa5e4b64e2440c35869b5d08",
+				"dweb:/ipfs/QmXKYWWyzcLg1B2k7Sb1qkEXgLCYfXecR9wYW5obRzWP1Q"
+			]
+		},
+		"@openzeppelin/contracts-upgradeable/utils/ContextUpgradeable.sol": {
+			"keccak256": "0xdbef5f0c787055227243a7318ef74c8a5a1108ca3a07f2b3a00ef67769e1e397",
+			"license": "MIT",
+			"urls": [
+				"bzz-raw://08e39f23d5b4692f9a40803e53a8156b72b4c1f9902a88cd65ba964db103dab9",
+				"dweb:/ipfs/QmPKn6EYDgpga7KtpkA8wV2yJCYGMtc9K4LkJfhKX2RVSV"
+			]
+		},
+		"contracts/BridgeManager.sol": {
+			"keccak256": "0x0dedd6fa4120a9cdc6eba1cea966c774cdf974ef3bbcc312ff18305a18d07f26",
+			"license": "MIT",
+			"urls": [
+				"bzz-raw://2feac8848ff5fe8572793fad9919b779ce82933675408214f356de93a2201be7",
+				"dweb:/ipfs/QmTtubYSjAT2BtHjKQFHCHgHtazsaxAtm9HrhiHrYDZq5s"
+			]
+		}
+	},
+	"version": 1
+}
