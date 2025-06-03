@@ -2,15 +2,16 @@
 pragma solidity ^0.8.20;
 
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
-import "@openzeppelin/contracts-upgradeable/security/ReentrancyGuardUpgradeable.sol";
-import "./sCELL.sol";
+import "@openzeppelin/contracts-upgradeable/utils/ReentrancyGuardUpgradeable.sol";
+import "@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol";
+import "./ValoraStakedCell.sol";
 import "./AdminManager.sol";
 import "./BridgeManager.sol";
 
 
-contract ValoraCore is ReentrancyGuardUpgradeable, AdminManager, BridgeManager {
+contract ValoraCore is ReentrancyGuardUpgradeable, UUPSUpgradeable, AdminManager, BridgeManager {
     IERC20 public cellToken;
-    sCELL public sCellToken;
+    ValoraStakedCell public sCellToken;
 
     uint256 private totalAssets;
     uint256 public constant MIN_DEPOSIT = 1e12; // Minimum deposit 0.000001 tokens (assuming 18 decimals)
@@ -36,13 +37,14 @@ contract ValoraCore is ReentrancyGuardUpgradeable, AdminManager, BridgeManager {
         bytes3 _nativeChainId,
         bytes calldata _validatorAddress
     ) external initializer {
-        __Ownable_init(msg.sender);
         __ReentrancyGuard_init();
+        __UUPSUpgradeable_init();
+        __Ownable_init(msg.sender);
         __AdminManager_init(_oracul);
         __BridgeManager_init(_bridge, _nativeChainId, _validatorAddress);
         
         cellToken = IERC20(_cellToken);
-        sCellToken = sCELL(_sCellToken);
+        sCellToken = ValoraStakedCell(_sCellToken);
     }
 
     // ═══════════════════════════════════════════════════════════════════
@@ -162,4 +164,10 @@ contract ValoraCore is ReentrancyGuardUpgradeable, AdminManager, BridgeManager {
     function getWithdrawalRequest(address user) external view returns (WithdrawalRequest memory) {
         return withdrawalRequests[user];
     }
+
+    // ═══════════════════════════════════════════════════════════════════
+    // UUPS UPGRADE AUTHORIZATION
+    // ═══════════════════════════════════════════════════════════════════
+
+    function _authorizeUpgrade(address newImplementation) internal override onlyOwner {}
 }

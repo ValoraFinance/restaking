@@ -11,9 +11,9 @@ import "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
 abstract contract AdminManager is OwnableUpgradeable {
     
     address public oracul;
-    bool public paused = false;
-    bool public withdrawalsEnabled = false; // Initially disabled, can only be enabled once
-    uint256 public withdrawalDelay = 7 days;
+    bool public paused;
+    bool public withdrawalsEnabled;
+    uint256 public withdrawalDelay;
 
     // Events
     event OracleUpdated(address indexed oldOracle, address indexed newOracle);
