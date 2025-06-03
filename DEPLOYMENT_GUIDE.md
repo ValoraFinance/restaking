@@ -1,4 +1,4 @@
-# Гайд по деплою ValoraFinance в Sepolia
+# Гайд по деплою ValoraFinance в BSC Testnet
 
 ## Подготовка к деплою
 
@@ -9,43 +9,43 @@
 # Приватный ключ вашего кошелька (без префикса 0x)
 PRIVATE_KEY=your_private_key_here_without_0x_prefix
 
-# RPC URL для Sepolia (можно получить на Infura/Alchemy)
-SEPOLIA_RPC_URL=https://sepolia.infura.io/v3/YOUR_INFURA_PROJECT_ID
+# RPC URL для BSC Testnet
+BSC_TESTNET_RPC_URL=https://data-seed-prebsc-1-s1.binance.org:8545/
 
-# API ключ Etherscan для верификации
-ETHERSCAN_API_KEY=your_etherscan_api_key_here
+# API ключ BSCScan для верификации
+BSCSCAN_API_KEY=your_bscscan_api_key_here
 
 # Включить отчет по газу
 REPORT_GAS=true
 ```
 
-### 2. Получите тестовые ETH для Sepolia
-- Перейдите на https://sepolia-faucet.pk910.de/ или https://sepoliafaucet.com/
-- Получите тестовые ETH на свой кошелек
+### 2. Получите тестовые BNB для BSC Testnet
+- Перейдите на https://testnet.bnbchain.org/faucet-smart
+- Получите тестовые BNB на свой кошелек
 
 ### 3. Заполните deployment-args.js
 Обновите адреса в файле `deployment-args.js`:
 
 ```javascript
 {
-  cellTokenAddress: "0x...", // Адрес CELL токена в Sepolia
+  cellTokenAddress: "0x...", // Адрес CELL токена в BSC Testnet
   oracleAddress: "0x...",    // Ваш адрес оракула
   bridgeAddress: "0x...",    // Адрес bridge контракта
   validatorAddress: "0x...", // Адрес валидатора
-  network: "sepolia"
+  network: "bscTestnet"
 }
 ```
 
 ## Деплой
 
-### Запуск деплоя в Sepolia:
+### Запуск деплоя в BSC Testnet:
 ```bash
-npx hardhat run scripts/deploy.js --network sepolia
+npx hardhat run scripts/deploy.js --network bscTestnet
 ```
 
-### Запуск деплоя в Ethereum mainnet:
+### Запуск деплоя в BSC Mainnet:
 ```bash
-npx hardhat run scripts/deploy.js --network ethereum
+npx hardhat run scripts/deploy.js --network bsc
 ```
 
 ## После деплоя

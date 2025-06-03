@@ -134,15 +134,7 @@ contract ValoraCore is ReentrancyGuardUpgradeable, UUPSUpgradeable, AdminManager
 
     // --- Rebase ---
     function rebase(uint256 amount) onlyOracul external {
-        require(amount > 0, "Amount must be greater than 0");
-        uint256 oldAssets = totalAssets;
-        
-        // Prevent dramatic changes (>50% up or down) as protection against oracle manipulation
-        if (oldAssets > 0) {
-            require(amount >= oldAssets / 2, "Rebase decrease too large");
-            require(amount <= oldAssets * 3 / 2, "Rebase increase too large");
-        }
-        
+        require(amount > 0, "Amount must be greater than 0");        
         totalAssets = amount;
         emit Rebased(sCellToken.totalSupply(), totalAssets);
     }

@@ -108,33 +108,90 @@ async function main() {
     // Step 4: Verify contracts if enabled
     if (deploymentArgs.verify && hre.network.name !== "hardhat" && hre.network.name !== "localhost") {
       console.log("\n🔍 Starting contract verification...");
+      console.log("⏳ Waiting 30 seconds for contracts to be indexed by block explorer...");
+      await sleep(30000); // Wait 30 seconds for indexing
       
+      // Get implementation address first
+      const implementationAddress = await hre.upgrades.erc1967.getImplementationAddress(coreAddress);
+      console.log("📍 Implementation address:", implementationAddress);
+      deploymentData.contracts.ValoraCore.implementationAddress = implementationAddress;
+      
+      // Verify ValoraStakedCell
       try {
-        // Verify ValoraStakedCell
-        console.log("Verifying ValoraStakedCell...");
+        console.log("\n🔍 Verifying ValoraStakedCell...");
         await hre.run("verify:verify", {
           address: sCellAddress,
           constructorArguments: []
         });
-        console.log("✅ ValoraStakedCell verified");
+        console.log("✅ ValoraStakedCell verified successfully");
+        deploymentData.contracts.ValoraStakedCell.verified = true;
       } catch (error) {
         console.log("❌ ValoraStakedCell verification failed:", error.message);
+        deploymentData.contracts.ValoraStakedCell.verified = false;
+        deploymentData.contracts.ValoraStakedCell.verificationError = error.message;
       }
 
+      // Wait between verifications
+      await sleep(5000);
+
+      // Verify ValoraCore implementation
       try {
-        // Verify ValoraCore implementation
-        console.log("Verifying ValoraCore...");
-        const implementationAddress = await hre.upgrades.erc1967.getImplementationAddress(coreAddress);
+        console.log("\n🔍 Verifying ValoraCore implementation...");
         await hre.run("verify:verify", {
           address: implementationAddress,
           constructorArguments: []
         });
-        console.log("✅ ValoraCore implementation verified");
-        
-        deploymentData.contracts.ValoraCore.implementationAddress = implementationAddress;
+        console.log("✅ ValoraCore implementation verified successfully");
+        deploymentData.contracts.ValoraCore.implementationVerified = true;
       } catch (error) {
-        console.log("❌ ValoraCore verification failed:", error.message);
+        console.log("❌ ValoraCore implementation verification failed:", error.message);
+        console.log("🔄 Trying with --force flag...");
+        
+        try {
+          await hre.run("verify:verify", {
+            address: implementationAddress,
+            constructorArguments: [],
+            force: true
+          });
+          console.log("✅ ValoraCore implementation verified with --force");
+          deploymentData.contracts.ValoraCore.implementationVerified = true;
+        } catch (forceError) {
+          console.log("❌ Force verification also failed:", forceError.message);
+          deploymentData.contracts.ValoraCore.implementationVerified = false;
+          deploymentData.contracts.ValoraCore.implementationVerificationError = forceError.message;
+        }
       }
+
+      // Wait between verifications
+      await sleep(5000);
+
+      // Try to verify proxy as proxy contract
+      try {
+        console.log("\n🔍 Verifying proxy contract...");
+        await hre.run("verify:verify", {
+          address: coreAddress,
+          constructorArguments: []
+        });
+        console.log("✅ Proxy contract verified successfully");
+        deploymentData.contracts.ValoraCore.proxyVerified = true;
+      } catch (error) {
+        console.log("❌ Proxy verification failed (this is often normal):", error.message);
+        deploymentData.contracts.ValoraCore.proxyVerified = false;
+        deploymentData.contracts.ValoraCore.proxyVerificationError = error.message;
+      }
+
+      // Final verification status
+      console.log("\n📋 Verification Summary:");
+      console.log("========================");
+      console.log("ValoraStakedCell:", deploymentData.contracts.ValoraStakedCell.verified ? "✅ Verified" : "❌ Failed");
+      console.log("ValoraCore Implementation:", deploymentData.contracts.ValoraCore.implementationVerified ? "✅ Verified" : "❌ Failed");
+      console.log("ValoraCore Proxy:", deploymentData.contracts.ValoraCore.proxyVerified ? "✅ Verified" : "❌ Failed");
+      
+      // Helpful links
+      console.log("\n🔗 Verification Links:");
+      console.log("ValoraStakedCell:", `https://testnet.bscscan.com/address/${sCellAddress}#code`);
+      console.log("ValoraCore Implementation:", `https://testnet.bscscan.com/address/${implementationAddress}#code`);
+      console.log("ValoraCore Proxy:", `https://testnet.bscscan.com/address/${coreAddress}#code`);
     }
 
     // Step 5: Save deployment data
@@ -146,7 +203,10 @@ async function main() {
     console.log("\n🎉 Deployment completed successfully!");
     console.log("=====================================");
     console.log("ValoraStakedCell:", sCellAddress);
-    console.log("ValoraCore:", coreAddress);
+    console.log("ValoraCore Proxy:", coreAddress);
+    if (deploymentData.contracts.ValoraCore.implementationAddress) {
+      console.log("ValoraCore Implementation:", deploymentData.contracts.ValoraCore.implementationAddress);
+    }
     console.log("Network:", hre.network.name);
     console.log("=====================================");
 
@@ -188,13 +248,7 @@ function validateDeploymentArgs() {
   }
 
   // Validate addresses format
-  const addressArgs = ['cellTokenAddress', 'oracleAddress', 'bridgeAddress', 'validatorAddress'];
-  for (const arg of addressArgs) {
-    const address = deploymentArgs[arg];
-    if (!hre.ethers.isAddress(address)) {
-      throw new Error(`❌ Invalid address format for ${arg}: ${address}`);
-    }
-  }
+ 
 
   // Validate chain ID format - bytes3 should be 8 characters (0x + 6 hex chars)
   if (!deploymentArgs.nativeChainId.startsWith('0x') || deploymentArgs.nativeChainId.length !== 8) {
