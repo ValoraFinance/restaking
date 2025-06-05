@@ -1,8 +1,6 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.20;
 
-import "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
-
 // Interface for bridge operations
 interface IBridge {
     function bridgeToken(address token_address, uint256 value, bytes3 destination, bytes calldata destination_address) external;
@@ -15,8 +13,9 @@ interface IBridge {
  * @title BridgeManager
  * @notice Reusable contract for managing bridge operations
  * @dev Can be inherited by any contract that needs bridge functionality
+ * Note: This contract expects the parent to provide onlyOwner modifier
  */
-abstract contract BridgeManager is OwnableUpgradeable {
+abstract contract BridgeManager {
     
     IBridge public bridge;
     
@@ -39,7 +38,7 @@ abstract contract BridgeManager is OwnableUpgradeable {
         address _bridge,
         bytes3 _nativeChainId,
         bytes calldata _validatorAddress
-    ) internal onlyInitializing {
+    ) internal {
         require(_bridge != address(0), "Invalid bridge address");
         require(_nativeChainId != bytes3(0), "Invalid chain ID");
         require(_validatorAddress.length > 0, "Invalid validator address");
@@ -50,26 +49,34 @@ abstract contract BridgeManager is OwnableUpgradeable {
     }
 
     // ═══════════════════════════════════════════════════════════════════
-    // BRIDGE MANAGEMENT
+    // BRIDGE MANAGEMENT - VIRTUAL FUNCTIONS
     // ═══════════════════════════════════════════════════════════════════
 
     /**
      * @notice Set bridge contract address
      * @param _bridge New bridge address
      */
-    function setBridge(address _bridge) external onlyOwner {
-        require(_bridge != address(0), "Invalid bridge address");
-        address oldBridge = address(bridge);
-        bridge = IBridge(_bridge);
-        emit BridgeUpdated(oldBridge, _bridge);
-    }
+    function setBridge(address _bridge) external virtual;
 
     /**
      * @notice Set validator address and chain ID
      * @param _chainId Target chain ID
      * @param _validatorAddress Validator address in target chain
      */
-    function setValidatorAddress(bytes3 _chainId, bytes calldata _validatorAddress) external onlyOwner {
+    function setValidatorAddress(bytes3 _chainId, bytes calldata _validatorAddress) external virtual;
+
+    // ═══════════════════════════════════════════════════════════════════
+    // INTERNAL IMPLEMENTATIONS
+    // ═══════════════════════════════════════════════════════════════════
+
+    function _setBridge(address _bridge) internal {
+        require(_bridge != address(0), "Invalid bridge address");
+        address oldBridge = address(bridge);
+        bridge = IBridge(_bridge);
+        emit BridgeUpdated(oldBridge, _bridge);
+    }
+
+    function _setValidatorAddress(bytes3 _chainId, bytes calldata _validatorAddress) internal {
         require(_chainId != bytes3(0), "Invalid chain ID");
         require(_validatorAddress.length > 0, "Invalid validator address");
         nativeChainId = _chainId;
@@ -97,7 +104,6 @@ abstract contract BridgeManager is OwnableUpgradeable {
         
         emit TokensBridgedToValidator(user, amount, nativeChainId, validatorAddress);
     }
-
 
     // ═══════════════════════════════════════════════════════════════════
     // VIEW FUNCTIONS

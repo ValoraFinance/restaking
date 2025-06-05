@@ -1,14 +1,13 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.20;
 
-import "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
-
 /**
  * @title AdminManager
  * @notice Reusable contract for managing administrative functions
  * @dev Can be inherited by any contract that needs admin functionality
+ * Note: This contract expects the parent to provide onlyOwner modifier
  */
-abstract contract AdminManager is OwnableUpgradeable {
+abstract contract AdminManager {
     
     address public oracul;
     bool public paused;
@@ -24,12 +23,12 @@ abstract contract AdminManager is OwnableUpgradeable {
 
     // Modifiers
     modifier onlyOracul() {
-        require(msg.sender == oracul, "not an oracul");
+        require(msg.sender == oracul, "Only oracle can call this");
         _;
     }
 
     modifier whenNotPaused() {
-        require(!paused, "Contract is paused");
+        require(!paused, "Pausable: paused");
         _;
     }
 
@@ -42,7 +41,7 @@ abstract contract AdminManager is OwnableUpgradeable {
      * @notice Initialize admin manager (call from inheriting contract's initialize)
      * @param _oracul Initial oracle address
      */
-    function __AdminManager_init(address _oracul) internal onlyInitializing {
+    function __AdminManager_init(address _oracul) internal {
         require(_oracul != address(0), "Invalid oracle address");
         oracul = _oracul;
         paused = false;
@@ -51,63 +50,76 @@ abstract contract AdminManager is OwnableUpgradeable {
     }
 
     // ═══════════════════════════════════════════════════════════════════
-    // ORACLE MANAGEMENT
+    // ORACLE MANAGEMENT - VIRTUAL FUNCTIONS
     // ═══════════════════════════════════════════════════════════════════
 
     /**
      * @notice Set oracle address
      * @param _oracul New oracle address
      */
-    function setOracul(address _oracul) external onlyOwner {
-        require(_oracul != address(0), "Invalid oracle address");
-        address oldOracle = oracul;
-        oracul = _oracul;
-        emit OracleUpdated(oldOracle, _oracul);
-    }
+    function setOracul(address _oracul) external virtual;
 
     // ═══════════════════════════════════════════════════════════════════
-    // WITHDRAWAL MANAGEMENT
+    // WITHDRAWAL MANAGEMENT - VIRTUAL FUNCTIONS
     // ═══════════════════════════════════════════════════════════════════
 
     /**
      * @notice Enable withdrawals forever (can only be called once)
      * @dev Once enabled, withdrawals cannot be disabled again
      */
-    function enableWithdrawals() external onlyOwner {
-        require(!withdrawalsEnabled, "Withdrawals already enabled");
-        withdrawalsEnabled = true;
-        emit WithdrawalsEnabled();
-    }
+    function enableWithdrawals() external virtual;
 
- 
-    // PAUSE MECHANISM
+    // PAUSE MECHANISM - VIRTUAL FUNCTIONS
     // ═══════════════════════════════════════════════════════════════════
 
     /**
      * @notice Pause contract operations
      */
-    function pause() external onlyOwner {
-        paused = true;
-        emit Paused();
-    }
+    function pause() external virtual;
 
     /**
      * @notice Unpause contract operations
      */
-    function unpause() external onlyOwner {
-        paused = false;  
-        emit Unpaused();
-    }
+    function unpause() external virtual;
 
     // ═══════════════════════════════════════════════════════════════════
-    // WITHDRAWAL DELAY MANAGEMENT
+    // WITHDRAWAL DELAY MANAGEMENT - VIRTUAL FUNCTIONS
     // ═══════════════════════════════════════════════════════════════════
 
     /**
      * @notice Set withdrawal delay period
      * @param _delay New delay in seconds (max 30 days)
      */
-    function setWithdrawalDelay(uint256 _delay) external onlyOwner {
+    function setWithdrawalDelay(uint256 _delay) external virtual;
+
+    // ═══════════════════════════════════════════════════════════════════
+    // INTERNAL IMPLEMENTATIONS
+    // ═══════════════════════════════════════════════════════════════════
+
+    function _setOracul(address _oracul) internal {
+        require(_oracul != address(0), "Invalid oracle address");
+        address oldOracle = oracul;
+        oracul = _oracul;
+        emit OracleUpdated(oldOracle, _oracul);
+    }
+
+    function _enableWithdrawals() internal {
+        require(!withdrawalsEnabled, "Withdrawals already enabled");
+        withdrawalsEnabled = true;
+        emit WithdrawalsEnabled();
+    }
+
+    function _pause() internal {
+        paused = true;
+        emit Paused();
+    }
+
+    function _unpause() internal {
+        paused = false;  
+        emit Unpaused();
+    }
+
+    function _setWithdrawalDelay(uint256 _delay) internal {
         require(_delay <= 30 days, "Delay too long");
         uint256 oldDelay = withdrawalDelay;
         withdrawalDelay = _delay;

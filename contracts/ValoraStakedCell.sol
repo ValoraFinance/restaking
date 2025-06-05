@@ -30,8 +30,8 @@ contract ValoraStakedCell is ERC20, Ownable {
         _mint(to, amount);
     }
 
-    function burn(uint256 amount) external onlyCore {
+    function burn(address from, uint256 amount) external onlyCore {
         require(amount > 0, "Amount must be greater than 0");
-        _burn(address(this), amount);
+        _burn(from, amount);
     }
 }
