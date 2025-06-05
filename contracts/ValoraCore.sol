@@ -8,10 +8,10 @@ import "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
 import "./ValoraStakedCell.sol";
 import "./AdminManager.sol";
 import "./BridgeManager.sol";
-import "./WeeklyWithdrawalManager.sol";
+import "./WithdrawalManager.sol";
 
 
-contract ValoraCore is ReentrancyGuardUpgradeable, UUPSUpgradeable, OwnableUpgradeable, AdminManager, BridgeManager, WeeklyWithdrawalManager {
+contract ValoraCore is ReentrancyGuardUpgradeable, UUPSUpgradeable, OwnableUpgradeable, AdminManager, BridgeManager, WithdrawalManager {
     IERC20 public cellToken;
     ValoraStakedCell public sCellToken;
 
@@ -41,7 +41,6 @@ contract ValoraCore is ReentrancyGuardUpgradeable, UUPSUpgradeable, OwnableUpgra
         __Ownable_init(msg.sender);
         __AdminManager_init(_oracul);
         __BridgeManager_init(_bridge, _nativeChainId, _validatorAddress);
-        _initializeWithdrawalManager();
         
         cellToken = IERC20(_cellToken);
         sCellToken = ValoraStakedCell(_sCellToken);
@@ -146,7 +145,7 @@ contract ValoraCore is ReentrancyGuardUpgradeable, UUPSUpgradeable, OwnableUpgra
     }
 
     // ═══════════════════════════════════════════════════════════════════
-    // WEEKLY WITHDRAWAL MANAGER IMPLEMENTATION
+    // BATCH WITHDRAWAL MANAGER IMPLEMENTATION
     // ═══════════════════════════════════════════════════════════════════
 
     function _getExchangeRate() internal view override returns (uint256) {
@@ -173,36 +172,24 @@ contract ValoraCore is ReentrancyGuardUpgradeable, UUPSUpgradeable, OwnableUpgra
         require(cellToken.transfer(user, assets), "Transfer failed");
     }
 
-    function _initiateNativeUnstaking(uint256 amount) internal override {
-        // This function should initiate unstaking process in CELL Frame
-        // Implementation depends on your bridge/communication mechanism
-        // Example: call bridge to unstake specific amount from validator
-        
-        // For now, we emit an event that can be picked up by off-chain services
-        emit NativeUnstakingInitiated(currentWeek, amount);
-        
-        // In real implementation, you might call:
-        // bridge.initiateUnstaking(validatorAddress, amount);
-    }
-
     // ═══════════════════════════════════════════════════════════════════
-    // WEEKLY WITHDRAWAL MANAGER OVERRIDES WITH MODIFIERS
+    // BATCH WITHDRAWAL MANAGER OVERRIDES WITH MODIFIERS
     // ═══════════════════════════════════════════════════════════════════
 
     function requestWithdrawal(uint256 shares) external override nonReentrant whenWithdrawalsEnabled {
         _requestWithdrawal(shares);
     }
 
-    function completeWithdrawal() external override nonReentrant {
-        _completeWithdrawal();
+    function unstake(bytes32 requestHash) external override nonReentrant {
+        _unstake(requestHash);
     }
 
-    function approveBatchByHash(bytes32 batchHash) external override onlyOwner {
-        _approveBatchByHash(batchHash);
+    function approveWithdrawal(bytes32 requestHash) external override onlyOwner {
+        _approveWithdrawal(requestHash);
     }
 
-    function moveToNextWeek() external override onlyOwner {
-        _moveToNextWeek();
+    function approveWithdrawals(bytes32[] calldata requestHashes) external override onlyOwner {
+        _approveWithdrawals(requestHashes);
     }
 
     // ═══════════════════════════════════════════════════════════════════

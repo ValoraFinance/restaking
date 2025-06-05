@@ -1,0 +1,29 @@
+{
+  "network": "bscTestnet",
+  "deployer": "0x49939aeD5D127C2d9a056CA1aB9aDe9F79fa8E81",
+  "timestamp": "2025-06-05T13:32:52.090Z",
+  "contracts": {
+    "ValoraStakedCell": {
+      "address": "0xd742242800406c2e53e7FA2DA8D50d8aef5d70F6",
+      "constructorArgs": [],
+      "verified": true
+    },
+    "ValoraCore": {
+      "address": "0xBEf897F53AbAF03a11F8B69D90366E886654fFfC",
+      "initArgs": [
+        "0x991C744431D5d7f258Ecd7E5bC11AE4BA2B939B5",
+        "0xd742242800406c2e53e7FA2DA8D50d8aef5d70F6",
+        "0x49939aeD5D127C2d9a056CA1aB9aDe9F79fa8E81",
+        "0x69d2A61aBdb528bBDa299F347CB0F04B4bf413aa",
+        "0x43464e",
+        "0x6a726d6e4771656564733444703637416369505756424e35684842346252766f5a444d74336755674e797735664d56734858456972366f564a714b48664c55443452704457664c51794469663257583577766f7a31446a584e734d4e7932734641724a76644a5074"
+      ],
+      "isProxy": true,
+      "implementationAddress": "0xf7f13C695B760cCc17c5c57b461cfa5e93AEE5A1",
+      "implementationVerified": false,
+      "implementationVerificationError": "The block explorer's API responded that the contract contracts/ValoraCore.sol:ValoraCore at 0xf7f13C695B760cCc17c5c57b461cfa5e93AEE5A1 is already verified.\nThis can happen if you used the '--force' flag. However, re-verification of contracts might not be supported\nby the explorer (e.g., Etherscan), or the contract may have already been verified with a full match.",
+      "proxyVerified": false,
+      "proxyVerificationError": "\nVerification completed with the following errors.\n\nError 1: Failed to verify ERC1967Proxy contract at 0xBEf897F53AbAF03a11F8B69D90366E886654fFfC: Already Verified\n\n"
+    }
+  }
+}
