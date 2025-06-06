@@ -1,4 +1,4 @@
-# Valora Finance - Liquid Staking для CELL Frame
+# Valora Finance - Liquid Staking для Cellframe
 
 ## 🔥 Обзор Протокола
 
@@ -39,7 +39,7 @@
 ### 🌉 BridgeManager - Кросс-Чейн Интеграция
 **[📚 Полная документация](docs/BridgeManager.md)**
 
-Модуль интеграции с CELL Frame Network:
+Модуль интеграции с Cellframe Network:
 - Автоматическая отправка токенов на валидаторы
 - Конфигурируемые параметры для разных чейнов
 - Поддержка IBridge интерфейса
@@ -82,8 +82,8 @@ graph TB
     A --> C[WithdrawalManager<br/>Система вывода]
     A --> D[AdminManager<br/>Администрирование] 
     A --> E[BridgeManager<br/>Cross-chain]
-    E --> F[IBridge<br/>CELL Frame Bridge]
-    F --> G[CELL Frame Validators]
+    E --> F[IBridge<br/>Cellframe Bridge]
+    F --> G[Cellframe Validators]
     
     style A fill:#ff6b6b
     style B fill:#4ecdc4
@@ -107,7 +107,7 @@ graph TB
     ↓
 🏦 ValoraCore получает CELL токены
     ↓  
-🌉 BridgeManager → отправляет на CELL Frame validator
+🌉 BridgeManager → отправляет на Cellframe validator
     ↓
 🪙 sCELL токены минтятся пользователю (по текущему курсу)
     ↓
