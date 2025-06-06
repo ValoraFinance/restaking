@@ -21,7 +21,7 @@ contract ValoraCore is ReentrancyGuardUpgradeable, UUPSUpgradeable, OwnableUpgra
     // Events
     event Staked(address indexed user, uint256 amount);
     event Rebased(uint256 totalShares, uint256 totalAssets);
-    event NativeUnstakingInitiated(uint256 indexed week, uint256 amount);
+
 
     /// @custom:oz-upgrades-unsafe-allow constructor
     constructor() {
@@ -54,20 +54,12 @@ contract ValoraCore is ReentrancyGuardUpgradeable, UUPSUpgradeable, OwnableUpgra
         _setOracul(_oracul);
     }
 
-    function enableWithdrawals() external override onlyOwner {
-        _enableWithdrawals();
-    }
-
     function pause() external override onlyOwner {
         _pause();
     }
 
     function unpause() external override onlyOwner {
         _unpause();
-    }
-
-    function setWithdrawalDelay(uint256 _delay) external override onlyOwner {
-        _setWithdrawalDelay(_delay);
     }
 
     // ═══════════════════════════════════════════════════════════════════
@@ -176,7 +168,7 @@ contract ValoraCore is ReentrancyGuardUpgradeable, UUPSUpgradeable, OwnableUpgra
     // BATCH WITHDRAWAL MANAGER OVERRIDES WITH MODIFIERS
     // ═══════════════════════════════════════════════════════════════════
 
-    function requestWithdrawal(uint256 shares) external override nonReentrant whenWithdrawalsEnabled {
+    function requestWithdrawal(uint256 shares) external override nonReentrant  {
         _requestWithdrawal(shares);
     }
 

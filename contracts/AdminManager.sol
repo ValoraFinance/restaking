@@ -11,13 +11,10 @@ abstract contract AdminManager {
     
     address public oracul;
     bool public paused;
-    bool public withdrawalsEnabled;
-    uint256 public withdrawalDelay;
+ 
 
     // Events
     event OracleUpdated(address indexed oldOracle, address indexed newOracle);
-    event WithdrawalDelayUpdated(uint256 oldDelay, uint256 newDelay);
-    event WithdrawalsEnabled(); // Can only be emitted once
     event Paused();
     event Unpaused();
 
@@ -32,11 +29,6 @@ abstract contract AdminManager {
         _;
     }
 
-    modifier whenWithdrawalsEnabled() {
-        require(withdrawalsEnabled, "Withdrawals not enabled yet");
-        _;
-    }
-
     /**
      * @notice Initialize admin manager (call from inheriting contract's initialize)
      * @param _oracul Initial oracle address
@@ -45,8 +37,7 @@ abstract contract AdminManager {
         require(_oracul != address(0), "Invalid oracle address");
         oracul = _oracul;
         paused = false;
-        withdrawalsEnabled = false; // Start with withdrawals disabled
-        withdrawalDelay = 7 days;
+   
     }
 
     // ═══════════════════════════════════════════════════════════════════
@@ -63,11 +54,7 @@ abstract contract AdminManager {
     // WITHDRAWAL MANAGEMENT - VIRTUAL FUNCTIONS
     // ═══════════════════════════════════════════════════════════════════
 
-    /**
-     * @notice Enable withdrawals forever (can only be called once)
-     * @dev Once enabled, withdrawals cannot be disabled again
-     */
-    function enableWithdrawals() external virtual;
+   
 
     // PAUSE MECHANISM - VIRTUAL FUNCTIONS
     // ═══════════════════════════════════════════════════════════════════
@@ -83,16 +70,6 @@ abstract contract AdminManager {
     function unpause() external virtual;
 
     // ═══════════════════════════════════════════════════════════════════
-    // WITHDRAWAL DELAY MANAGEMENT - VIRTUAL FUNCTIONS
-    // ═══════════════════════════════════════════════════════════════════
-
-    /**
-     * @notice Set withdrawal delay period
-     * @param _delay New delay in seconds (max 30 days)
-     */
-    function setWithdrawalDelay(uint256 _delay) external virtual;
-
-    // ═══════════════════════════════════════════════════════════════════
     // INTERNAL IMPLEMENTATIONS
     // ═══════════════════════════════════════════════════════════════════
 
@@ -103,11 +80,7 @@ abstract contract AdminManager {
         emit OracleUpdated(oldOracle, _oracul);
     }
 
-    function _enableWithdrawals() internal {
-        require(!withdrawalsEnabled, "Withdrawals already enabled");
-        withdrawalsEnabled = true;
-        emit WithdrawalsEnabled();
-    }
+
 
     function _pause() internal {
         paused = true;
@@ -119,13 +92,6 @@ abstract contract AdminManager {
         emit Unpaused();
     }
 
-    function _setWithdrawalDelay(uint256 _delay) internal {
-        require(_delay <= 30 days, "Delay too long");
-        uint256 oldDelay = withdrawalDelay;
-        withdrawalDelay = _delay;
-        emit WithdrawalDelayUpdated(oldDelay, _delay);
-    }
-
     // ═══════════════════════════════════════════════════════════════════
     // VIEW FUNCTIONS
     // ═══════════════════════════════════════════════════════════════════
@@ -134,10 +100,9 @@ abstract contract AdminManager {
      * @notice Get admin configuration
      * @return oracul_ Oracle address
      * @return paused_ Whether contract is paused
-     * @return withdrawalDelay_ Current withdrawal delay
      */
-    function getAdminConfig() external view returns (address oracul_, bool paused_, uint256 withdrawalDelay_) {
-        return (oracul, paused, withdrawalDelay);
+    function getAdminConfig() external view returns (address oracul_, bool paused_) {
+        return (oracul, paused);
     }
 
     /**
