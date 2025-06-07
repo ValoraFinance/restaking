@@ -237,11 +237,6 @@ await valoraCore.unstake(requestHash);
 - 🔄 Advanced bridge integration
 - 🔄 Security audit
 
-### 📋 Planned (v2.0)
-- 📅 Governance token
-- 📅 Insurance fund for slashing protection
-- 📅 Layer 2 expansion (Arbitrum, Optimism)
-- 📅 Mobile app integration
 
 ## 🛠️ Для Разработчиков
 
