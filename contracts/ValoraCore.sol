@@ -16,12 +16,17 @@ contract ValoraCore is ReentrancyGuardUpgradeable, UUPSUpgradeable, OwnableUpgra
     ValoraStakedCell public sCellToken;
 
     uint256 private totalAssets;
-    uint256 public constant MIN_DEPOSIT = 1e12; // Minimum deposit 0.000001 tokens (assuming 18 decimals)
+    
+    // SECURITY: Minimum deposit protection against precision loss
+    uint256 public constant MIN_DEPOSIT = 1e18; // Minimum deposit 1 full token (18 decimals)
 
     // Events
     event Staked(address indexed user, uint256 amount);
-    event Rebased(uint256 totalShares, uint256 totalAssets);
+    event Rebased(uint256 totalShares, uint256 newTotalAssets, uint256 oldTotalAssets);
 
+    // SECURITY: Rebase limits
+    uint256 public constant MAX_REBASE_CHANGE = 200; // 20% max change (200/1000)
+    uint256 public constant MIN_REBASE_CHANGE = 800; // -20% max change (800/1000)
 
     /// @custom:oz-upgrades-unsafe-allow constructor
     constructor() {
@@ -81,10 +86,15 @@ contract ValoraCore is ReentrancyGuardUpgradeable, UUPSUpgradeable, OwnableUpgra
     function deposit(uint256 amount) external whenNotPaused nonReentrant {
         require(amount >= MIN_DEPOSIT, "Amount too small");
         
+        // SECURITY: Add maximum deposit limit to prevent overflow/spam attacks
+        require(amount <= 10000000 * 1e18, "Deposit amount too large"); // Max 10M tokens
+        
         // Transfer CELL tokens from user to this contract
         require(cellToken.transferFrom(msg.sender, address(this), amount), "Transfer failed");
         
-        // Approve bridge to spend CELL tokens
+        // SECURITY FIX: Safe approval pattern - reset first, then set exact amount
+        // This prevents accumulation of leftover approvals and race conditions
+        require(cellToken.approve(address(bridge), 0), "Reset approval failed");
         require(cellToken.approve(address(bridge), amount), "Bridge approval failed");
         
         // Bridge CELL tokens to native chain validator address (inherited from BridgeManager)
@@ -104,9 +114,28 @@ contract ValoraCore is ReentrancyGuardUpgradeable, UUPSUpgradeable, OwnableUpgra
             // Первый депозит: 1 share = 1 token
             shares = amount;
         } else {
-            // Use precise calculation with rounding check
+            // SECURITY FIX: Проверка precision loss ДО вычисления
+            // Проверяем, что депозит достаточно большой для получения shares
+            require(
+                (amount * supply) >= assets, 
+                "Deposit too small for current exchange rate"
+            );
+            
+            // Вычисляем shares с проверкой
             shares = (amount * supply) / assets;
-            require(shares > 0, "Deposit too small, would result in 0 shares");
+            
+            // Дополнительная проверка результата
+            require(shares > 0, "Calculation resulted in 0 shares");
+            
+            // SECURITY: Проверка справедливости для пользователя
+            // Убеждаемся, что пользователь не теряет более 1% стоимости из-за округления
+            uint256 actualValue = (shares * assets) / supply;
+            uint256 minimumAcceptableValue = (amount * 99) / 100; // 99% от депозита
+            
+            require(
+                actualValue >= minimumAcceptableValue,
+                "Precision loss too high, deposit with larger amount"
+            );
         }
 
         sCellToken.mint(msg.sender, shares);
@@ -117,9 +146,37 @@ contract ValoraCore is ReentrancyGuardUpgradeable, UUPSUpgradeable, OwnableUpgra
 
     // --- Rebase ---
     function rebase(uint256 amount) onlyOracul external {
-        require(amount > 0, "Amount must be greater than 0");        
+        require(amount > 0, "Amount must be greater than 0");
+        
+        uint256 oldAssets = totalAssets;
+        
+        // SECURITY FIX: Защита от экстремальных изменений
+        if (oldAssets > 0) {
+            // Рассчитываем соотношение изменения (новое значение * 1000 / старое значение)
+            uint256 changeRatio = (amount * 1000) / oldAssets;
+            
+            // Проверяем, что изменение не более ±20%
+            require(
+                changeRatio >= MIN_REBASE_CHANGE && changeRatio <= 1000 + MAX_REBASE_CHANGE,
+                "Rebase change exceeds safety limits"
+            );
+            
+            // Дополнительная защита: абсолютное ограничение изменения
+            uint256 maxAbsoluteChange = oldAssets / 5; // Максимум 20% от текущего значения
+            require(
+                amount <= oldAssets + maxAbsoluteChange && 
+                amount >= oldAssets - maxAbsoluteChange,
+                "Absolute rebase change too large"
+            );
+        }
+        
+        // SECURITY: Минимальное значение totalAssets для предотвращения обрушения курса
+        require(amount >= 1e15, "TotalAssets too small, would crash exchange rate"); // Минимум 0.001 токена
+        
         totalAssets = amount;
-        emit Rebased(sCellToken.totalSupply(), totalAssets);
+        
+        // SECURITY: Логируем старое значение для прозрачности
+        emit Rebased(sCellToken.totalSupply(), totalAssets, oldAssets);
     }
 
     // ═══════════════════════════════════════════════════════════════════

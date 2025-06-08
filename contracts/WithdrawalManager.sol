@@ -83,7 +83,7 @@ abstract contract WithdrawalManager {
         uint256 amount,
         uint256 blockNumber
     ) public pure returns (bytes32) {
-        return keccak256(abi.encodePacked(user, shares, amount, blockNumber));
+        return keccak256(abi.encode(user, shares, amount, blockNumber));
     }
     
     function getUserRequests(address user) external view returns (bytes32[] memory) {
